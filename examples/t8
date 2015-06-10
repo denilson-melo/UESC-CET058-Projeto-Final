@@ -1,0 +1,12 @@
+int main(){
+    int xyz;
+    xyz = 1;
+    ;
+    while ( (xyz+1) ){
+        if ( xyz ){
+        };
+        if ( 2 ){
+        }
+    }
+    return (xyz)
+}

@@ -1,0 +1,8 @@
+int main(){
+    int xyz;
+    if ( xyz ){
+        whole ( xyz ){
+        }
+    }
+    return (0)
+}

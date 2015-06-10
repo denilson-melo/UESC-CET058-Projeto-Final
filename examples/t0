@@ -1,0 +1,15 @@
+int main(){
+    int x, y;
+    x = 2;
+    ;
+    y = 3;
+    ;
+    x = (x*y);
+    ;
+    return(0)
+}
+
+X
+X LOD 
+Y LOD
+* OPR 0 4

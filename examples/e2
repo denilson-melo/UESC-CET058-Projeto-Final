@@ -1,0 +1,4 @@
+int main() { 
+    xxy = 22;
+    return (xxy)
+}

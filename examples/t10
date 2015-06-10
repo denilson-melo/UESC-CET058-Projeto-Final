@@ -1,0 +1,10 @@
+int main(){
+    int xyz;
+    while ( xyz ){
+        for ( xyz; 10; (xyz + 1)){
+        }
+        ;
+        xyz = (xyz + 2);
+    }
+    return (0)
+}

@@ -1,0 +1,13 @@
+int main(){
+    int x, y, z;
+    x = 1;
+    ;
+    y = 2;
+    ;
+    z = 3;
+    ;
+    for (x;y;z){
+        x = z;
+    }
+    return (0)
+}

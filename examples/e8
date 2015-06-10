@@ -1,0 +1,10 @@
+int main(){
+    int xyz;
+    xyz = 1;
+    
+    while ( xyz ){
+        if ( xyz ){
+        }
+    }
+    return (0)
+}
