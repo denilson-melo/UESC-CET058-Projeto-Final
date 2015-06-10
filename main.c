@@ -76,6 +76,10 @@ struct  entry* tree[TREE_SIZE];
 long long unsigned at = 0;
 struct  entry* aTree[TREE_SIZE];
 
+//Arvore teste
+struct treeNode * ygg;
+struct treeNode * nav;
+
 //Pilha auxiliar para arvore de análise sintática
 int si = 0;
 int stack[1024];
@@ -157,7 +161,9 @@ void main( int argc , char ** argv ){
     }
     //generateRpn(0);
     //printRpn();
-    treeTest();
+    //treeTest();
+    printf("URUBU DA YGGDRASIL\n");
+    preOrder(ygg);
     freeTable();
     //free(tree);
 }
@@ -165,23 +171,24 @@ void main( int argc , char ** argv ){
 void S(){
     if(symEquals("int")){
         insertEntry("int","type");
-        //tree[ti++] = lookUp("int");
+        tree[ti++] = lookUp("int");
         next();
         if(symEquals("main")){
             insertEntry("main","keyword");
-            aTree[at++] = tree[ti++] = lookUp("main");
+            aTree[at++] = tree[ti++] = lookUp("main"); ygg = startNode(ygg, lookUp("main"));
+            nav = ygg;
             next();
             if(symEquals("(")){				
                 insertEntry("(","symbol");				
-                //tree[ti++] = lookUp("(");
+                tree[ti++] = lookUp("(");
                 next();
                 if(symEquals(")")){
                     insertEntry(")","symbol");
-                    //tree[ti++] = lookUp(")");
+                    tree[ti++] = lookUp(")");
                     next();
                     if (symEquals("{")){
                         insertEntry("{","symbol");
-                        //tree[ti++] = lookUp("{");
+                        tree[ti++] = lookUp("{");
                             next();
                         tree[ti++] = lookUp("DECL");
                         push(ti); pushA(at);
@@ -194,7 +201,7 @@ void S(){
                         if ( symEquals("return") ){
                             insertEntry("return","keyword");
                             at++;
-                            aTree[at] = tree[ti++] = lookUp("return");
+                            aTree[at] = tree[ti++] = lookUp("return"); nav = addChild(nav, lookUp("return"));
                                 next();
                             if ( symEquals("(") ){
                                 insertEntry("(","symbol");
@@ -202,16 +209,16 @@ void S(){
                                     next();
                                 tree[ti++] = lookUp("E");
                                 push(ti);		
-                                at*=treeLevelSize;
+                                at*=treeLevelSize; nav = addChild(nav,NULL);
                                     E();
-                                ti = pop();
+                                ti = pop(); nav = nav->father;
                                 if ( symEquals(")") ){
                                     insertEntry(")","symbol");									
                                     tree[ti++] = lookUp(")");
                                         next();
                                     if ( symEquals("}") ){
                                         insertEntry("}","symbol");
-                                        //tree[ti++] = lookUp("}");
+                                        tree[ti++] = lookUp("}");
                                         return;
                                     }
                                 }
@@ -365,7 +372,7 @@ void VAR(){
             }
             tempToken[i] = '\0';			
             insertEntry(tempToken, "variable");
-            aTree[at] = tree[ti++] = lookUp(tempToken);
+            aTree[at] = tree[ti++] = lookUp(tempToken); setNode(nav, lookUp(tempToken));
             ungetc(c,fp);
             next();
             return;
@@ -478,24 +485,26 @@ void SATRIB(){
     ti--;
     ti*=treeLevelSize;
     tree[ti++] = lookUp("VAR");
+    nav = addChild(nav,NULL);
     push(ti); pushA(at);
-    at *= treeLevelSize;
-        VAR();
-    ti = pop(); at = popA();
+    at *= treeLevelSize; nav = addChild(nav, NULL);
+        VAR(); //nav->startNode(nav,)  lookUp("VAR");
+    ti = pop(); at = popA(); nav = nav->father;
     if ( symEquals("=") ){
         insertEntry("=","symbol");
         tree[ti++] = lookUp("=");
-        aTree[at] = lookUp("=");
+        aTree[at] = lookUp("="); setNode(nav, lookUp("="));
             next();
         tree[ti++] = lookUp("E");
         push(ti); pushA(at);
-        at*=treeLevelSize; at++;
+        at*=treeLevelSize; at++; nav = addChild(nav, NULL);
             E();
-        ti = pop(); at = popA();
+        ti = pop(); at = popA();nav = nav->father;
         if ( symEquals(";") ){
             insertEntry(";","symbol");
             tree[ti++] = lookUp(";");
             next();
+            nav = nav->father;
             return;
         }
     }
@@ -698,19 +707,19 @@ void E(){
             tree[ti++] = lookUp("(");
                 next();
             tree[ti++] = lookUp("E");
-            push(ti); pushA(at);
+            push(ti); pushA(at); nav = addChild(nav, NULL);
             at*=treeLevelSize;
                 E();
-            ti = pop(); at = popA();
+            ti = pop(); at = popA(); nav = nav->father;
             tree[ti++] = lookUp("B");
             push(ti);
                 B();
             ti = pop();
             tree[ti++] = lookUp("E");
-            push(ti); pushA(at);
+            push(ti); pushA(at); nav = addChild(nav, NULL);
             at*=treeLevelSize; at++;
                 E();
-            ti = pop(); popA();
+            ti = pop(); popA(); nav = nav->father;
             if ( symEquals(")") ){
                 insertEntry(")","symbol");
                 tree[ti++] = lookUp(")");
@@ -736,22 +745,22 @@ void B(){
     ti*=treeLevelSize;
     if ( symEquals("+") ){
         insertEntry("+","symbol");
-        aTree[at] = tree[ti++] = lookUp("+");
+        aTree[at] = tree[ti++] = lookUp("+"); setNode(nav, lookUp("+"));
         next();
         return;
     }else if ( symEquals("-") ){
         insertEntry("-","symbol");
-        aTree[at] = tree[ti++] = lookUp("-");
+        aTree[at] = tree[ti++] = lookUp("-"); setNode(nav, lookUp("-"));
         next();
         return;
     }else if ( symEquals("*") ){
         insertEntry("*","symbol");
-        aTree[at] = tree[ti++] = lookUp("*");
+        aTree[at] = tree[ti++] = lookUp("*"); setNode(nav, lookUp("*"));
         next();
         return;
     }else if ( symEquals("/") ){
         insertEntry("/","symbol");
-        aTree[at] = tree[ti++] = lookUp("/");
+        aTree[at] = tree[ti++] = lookUp("/"); setNode(nav, lookUp("/"));
         next();
         return;
     } 
@@ -780,7 +789,7 @@ void NUM(){
             }
         tempToken[i] = '\0';
         insertEntry(tempToken,"number");
-        aTree[at] = tree[ti++] = lookUp(tempToken);
+        aTree[at] = tree[ti++] = lookUp(tempToken); setNode(nav, lookUp(tempToken));
         return;
     }
     error();

@@ -35,6 +35,7 @@ struct treeNode * addChild (struct treeNode * node, struct entry * data){
     //If adding the first child, just create it
     if ( node->children == NULL ){
         node->children = startNode(node->children,data);
+        nav = node->children;
     }
     //If there is already one child, it goes into the linked list, to get the
     //last position (the number of children is variable)
@@ -71,4 +72,8 @@ struct treeNode * startNode(struct treeNode * node, struct entry * data){
     node->children = NULL;
     node->father = NULL;
     return node;
+}
+
+void setNode(struct treeNode * node, struct entry * data){
+    node->info = data;
 }

@@ -12,6 +12,7 @@ void treeTest();
 void startTree(struct treeNode *);
 struct treeNode * addChild(struct treeNode *, struct entry *);
 struct treeNode * startNode(struct treeNode *, struct entry *);
+void setNode(struct treeNode *, struct entry *);
 void preOrder(struct treeNode *);
 
 #endif
