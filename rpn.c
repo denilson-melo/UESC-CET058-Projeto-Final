@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include "main.h"
 #include "rpn.h"
+#include "symtable.h"
+#include "generator.h"
 
 struct entry * nprElements[ NPR_STRING_SIZE ];
 int aux = 0;
@@ -34,4 +36,5 @@ void printRpn(){
             printf("%d : %s\n", i, nprElements[i]->name);
         }
     }
+    populateStack(nprElements);
 }

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "tree.h"
 #include "main.h"
+#include "symtable.h"
 
 struct treeNode * yggdrasil;
 
