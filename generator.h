@@ -1,7 +1,8 @@
 #ifndef GENERATOR_H
 #define GENERATOR_H
 
-#define GEN_STACK_SIZE 1024
+#define INSTRUCTION_COUNT 9
+#define LIST_SIZE 1024
 #define VARIABLE_MAX 12
 #define CODE_SIZE 1024
 
@@ -14,7 +15,7 @@ struct instruction{
     int argument;
 };
 struct instruction instructions[CODE_SIZE];
-struct entry * genStack[GEN_STACK_SIZE];
+struct entry * list[LIST_SIZE];
 
 struct variable{
     struct entry * var;
@@ -30,11 +31,18 @@ void generateCode();
 void setInstruction(int,int,int,int);
 void printInstructions();
 
+void generateInstructions();
 void multiplyOperation();
 void equalsOperation();
+void whileOperation();
 void returnOperation();
 
 void populateStack(struct entry **);
 void printStack();
-
+void removeFromList(int);
+void shiftListLeft(int);
+void shiftListRight(int);
+void listAdd(int);
+void listSet(int, struct entry *);
+char * getInstructionName(int);
 #endif

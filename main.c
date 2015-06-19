@@ -155,9 +155,9 @@ void main( int argc , char ** argv ){
     }
     generateRpn(0);
     printRpn();
-    printf("TESTE\n");
-    printf("Numero de variaveis: %d \n", getClassCount("Variable"));
-    printStack();
+    //printf("TESTE\n");
+    //printf("Numero de variaveis: %d \n", getClassCount("Variable"));
+    //printStack();
     generateCode();
     printInstructions();
     //printTable();
@@ -598,7 +598,10 @@ void SWHILE(){
                     tree[ti++] = lookUp("STMT");
                     push(ti); pushA(at);
                     at *= treeLevelSize; at++;
+                        aTree[at++] = lookUp("{");
                         STMT();
+                        insertEntry("}","symbol");
+                        aTree[++at] = lookUp("}");
                     ti = pop(); at = popA();
                     if ( symEquals("}") ){
                         insertEntry("}","symbol");

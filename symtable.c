@@ -36,7 +36,7 @@ struct entry * lookUp( char *c ){
 
 int getClassCount(char * str){
     int i;
-    int count;
+    int count = 0;
     struct entry * nav;
     for ( i=0; i < TABLE_SIZE; i++){
         if ( hashTable[i].key != NULL ){

@@ -2,6 +2,16 @@ int main(){
     int x, y;
     x = 2;
     ;
+    while ( (x*y) ){
+        y = 3;
+    }
+    return(0)
+}
+
+int main(){
+    int x, y;
+    x = 2;
+    ;
     y = 3;
     ;
     x = (x*y);
@@ -9,7 +19,8 @@ int main(){
     return(0)
 }
 
+
 X
-X LOD 
-Y LOD
-* OPR 0 4
+LIT 0 3
+STO 0 4
+

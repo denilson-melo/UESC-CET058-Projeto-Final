@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "main.h"
 #include "rpn.h"
 #include "symtable.h"
@@ -18,12 +19,20 @@ void generateRpn(int k){
     if ( aTree[k] == NULL ){
         return;
     }
+    
+    if ( strcmp(aTree[k]->name, "while") == 0 ){
+        nprElements[aux] = aTree[k];
+        aux++;
+    }
     k *= treeLevelSize;
     for ( i; i<12; i++){
         generateRpn((k+i));
     }
     k /= treeLevelSize;
-    nprElements[aux] = aTree[k];
+    if ( strcmp(aTree[k]->name, "while") != 0 ){
+        nprElements[aux] = aTree[k];
+    }
+    //nprElements[aux] = aTree[k];
     aux++;
 }
 
