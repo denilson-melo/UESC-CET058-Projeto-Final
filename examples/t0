@@ -2,7 +2,19 @@ int main(){
     int x;
     x = 2;
     ;
-    for ( (x+1);(x+2);(x+3) ){
+    if ( (x+(2+2)) ){
+        x = 5;
+        ;
+        y = 3;
+    }
+    return(x)
+}
+
+int main(){
+    int x;
+    x = 2;
+    ;
+    for ( (x+1);(x+(2+2));(x+3) ){
         x = 5;
         ;
         y = 3;

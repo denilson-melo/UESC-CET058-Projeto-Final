@@ -12,7 +12,9 @@ int li = 0;
 int variableCount = 0;
 int body = -1;
 int condition = -1;
+int conditionJpc = -1;
 int increment = -1;
+int incrementJmp = -1;
 int control;
 
 void generateCode(){
@@ -38,29 +40,23 @@ void generateInstructions(char * str){
             ifOperation();
         }else if ( listCompare(li,"for") ){
             forOperation();
-        }else if ( control != NONE && condition!=-1 && listCompare(li,"}") ){
+        }else if ( control != NONE && listCompare(li,"}") ){
             if ( control == WHILE ){
-                setInstruction(counter, JMP, 0, condition);
-                setInstruction(body, JPC, 0, counter+1);
-                body = -1;
-                condition = -1;
-                counter -= 2;
+                setInstruction(counter, JMP, 0, condition+1);
+                setInstruction(conditionJpc, JPC, 0, counter+1);
+                counter -= 1;
             }
             if ( control == IF ){
-                setInstruction(body, JPC, 0, counter+1);
-                body = -1;
-                condition = -1;
+                setInstruction(conditionJpc, JPC, 0, counter+1);
                 counter -= 1;
             }
             if ( control == FOR ){
                 printStack(); printf("TRETA %d\n", counter);
-                setInstruction(counter, JMP, 0, increment-2);
-                setInstruction(increment, JMP, 0, condition-2);
-                setInstruction(condition, JPC, 0, counter);
-                setInstruction(condition+1, JMP, 0, body+2);
+                setInstruction(counter, JMP, 0, increment+1);
+                setInstruction(incrementJmp, JMP, 0, condition+1);
+                setInstruction(conditionJpc, JPC, 0, counter);
+                setInstruction(conditionJpc+1, JMP, 0, body+1);
                 counter -= 3;
-                body = -1;
-                condition = -1;
             }
             control = NONE;
             li++;
@@ -115,20 +111,19 @@ void equalsOperation(){
 
 void whileOperation(){
     li++;
-    condition = counter+1;
+    condition = counter;
     control = WHILE;
     generateInstructions("{");
-    body = counter;
+    conditionJpc = counter;
     setInstruction(counter, JPC, 0, -1 );
     li++;
 }
 
 void ifOperation(){
     li++;
-    condition = counter+1;
     control = IF;
     generateInstructions("{");
-    body = counter;
+    conditionJpc = counter;
     setInstruction(counter, JPC, 0, -1 );
     li++;
 }
@@ -136,17 +131,19 @@ void ifOperation(){
 void forOperation(){
     li++;
     generateInstructions(";");
-    condition = counter+3;
     control = FOR;
     li++;
+    condition = counter;
     generateInstructions(";");
+    conditionJpc = counter;
     setInstruction(counter, JPC, 0, -1 );
     setInstruction(counter, JMP, 0, -1 );
     
-    increment = counter+3;
+    increment = counter;
     generateInstructions("{");
-    body = counter;
+    incrementJmp = counter;
     setInstruction(counter, JMP, 0, -1 );
+    body = counter;
     li++;
 }
 
