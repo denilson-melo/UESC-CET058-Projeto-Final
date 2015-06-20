@@ -1,11 +1,13 @@
 int main(){
-    int x, y;
+    int x;
     x = 2;
     ;
-    while ( (x*y) ){
+    for ( (x+1);(x+2);(x+3) ){
+        x = 5;
+        ;
         y = 3;
     }
-    return(0)
+    return(x)
 }
 
 int main(){

@@ -8,97 +8,156 @@
 
 char * instructionString[] = { "LIT", "OPR", "LOD", "STO", "CAL", "INT", "JMP", "JPC", "WRT" };
 int counter = 0;
-int gi = 0;
+int li = 0;
 int variableCount = 0;
-int lastJmp = -1;
-int lastStart = -1;
+int body = -1;
+int condition = -1;
+int increment = -1;
+int control;
 
 void generateCode(){
     setInstruction(counter, INT, 0, 3+getClassCount("Variable"));
     setupVariables();
-    generateInstructions("main", 0);
+    generateInstructions("main");
 }
 
-void generateInstructions(char * str, int values){
-    while ( strcmp(list[gi]->name, str) != 0 ) {
-        printf("TRE %s %d\n", list[gi]->name, gi);
-        if ( strcmp(list[gi]->name,"=") == 0 ){
+void generateInstructions(char * str){
+    while ( strcmp(list[li]->name, str) != 0 ) {
+        //printf("TRE %s %d\n", list[li]->name, li);
+        if ( listCompare(li,"=") ){
             equalsOperation();
-        }else if ( strcmp(list[gi]->name,"*") == 0 ){
+        }else if ( listCompare(li,"*") ){
             multiplyOperation();
-        }else if ( strcmp(list[gi]->name,"return") == 0 ){
+        }else if ( listCompare(li,"+") ){
+            sum();
+        }else if ( listCompare(li,"return") ){
             returnOperation();
-        }else if ( strcmp(list[gi]->name,"while") == 0 ){
+        }else if ( listCompare(li,"while") ){
             whileOperation();
-        }else if ( !values && strcmp(list[gi]->name,"}") == 0 ){
-            if ( lastJmp != -1 ){
-                setInstruction(counter, JMP, 0, lastStart);
-                setInstruction(lastJmp, JPC, 0, counter+1);
-                lastJmp = -1;
-                lastStart = -1;
+        }else if ( listCompare(li,"if") ){
+            ifOperation();
+        }else if ( listCompare(li,"for") ){
+            forOperation();
+        }else if ( control != NONE && condition!=-1 && listCompare(li,"}") ){
+            if ( control == WHILE ){
+                setInstruction(counter, JMP, 0, condition);
+                setInstruction(body, JPC, 0, counter+1);
+                body = -1;
+                condition = -1;
+                counter -= 2;
             }
-            gi++;
+            if ( control == IF ){
+                setInstruction(body, JPC, 0, counter+1);
+                body = -1;
+                condition = -1;
+                counter -= 1;
+            }
+            if ( control == FOR ){
+                printStack(); printf("TRETA %d\n", counter);
+                setInstruction(counter, JMP, 0, increment-2);
+                setInstruction(increment, JMP, 0, condition-2);
+                setInstruction(condition, JPC, 0, counter);
+                setInstruction(condition+1, JMP, 0, body+2);
+                counter -= 3;
+                body = -1;
+                condition = -1;
+            }
+            control = NONE;
+            li++;
         } else
-        gi++;
-        if ( list[gi] == NULL ){
-            gi++;
+        li++;
+        if ( list[li] == NULL ){
+            li++;
         } 
     }
 }
 
+void getOperand(){
+    if ( strcmp(list[li]->sclass,"Number") == 0 ){
+        setInstruction(counter, LIT, 0, atoi(list[li]->value) );
+    }
+    if ( strcmp(list[li]->sclass,"Variable") == 0 ){
+        setInstruction(counter, LOD, 0, getVariablePos(list[li]->name) );
+    }
+}
+
+void binaryOperation(){
+    li--;
+    getOperand();
+    removeFromList(li);
+    li--;
+    getOperand();
+    removeFromList(li);
+}
+
 void multiplyOperation(){
-    gi--;
-    if ( strcmp(list[gi]->sclass,"Number") == 0 ){
-        setInstruction(counter, LIT, 0, atoi(list[gi]->value) );
-    }
-    if ( strcmp(list[gi]->sclass,"Variable") == 0 ){
-        setInstruction(counter, LOD, 0, getVariablePos(list[gi]->name) );
-    }
-    removeFromList(gi);
-    gi--;
-    if ( strcmp(list[gi]->sclass,"Number") == 0 ){
-        setInstruction(counter, LIT, 0, atoi(list[gi]->value) );
-    }
-    if ( strcmp(list[gi]->sclass,"Variable") == 0 ){
-        setInstruction(counter, LOD, 0, getVariablePos(list[gi]->name) );
-    }
-    removeFromList(gi);
-    
+    binaryOperation();
     setInstruction(counter, OPR, 0, MUL );
-    listSet(gi, lookUp("E"));
-    printf("VEREDITCO %s\n", list[gi]->name);
+    listSet(li, lookUp("E"));
+}
+
+void sum(){
+    binaryOperation();
+    setInstruction(counter, OPR, 0, ADD );
+    listSet(li, lookUp("E"));
 }
 
 void equalsOperation(){
-    gi--;
-    if ( strcmp(list[gi]->sclass,"Number") == 0 ){
-        setInstruction(counter, LIT, 0, atoi(list[gi]->value) );
-    }
-    removeFromList(gi);
-    
-    gi--;
-    setInstruction(counter, STO, 0, getVariablePos(list[gi]->name) );
-    removeFromList(gi);
-    gi++;
-    //printf("VEREDITCO %s\n", list[gi]->name);
+    li--;
+    getOperand();
+    removeFromList(li);
+    li--;
+    setInstruction(counter, STO, 0, getVariablePos(list[li]->name) );
+    removeFromList(li);
+    li++;
+    //printf("VEREDITCO %s\n", list[li]->name);
 }
 
 void whileOperation(){
-    gi++;
-    lastStart = counter+1;
-    generateInstructions("{", 1);
-    lastJmp = counter;
+    li++;
+    condition = counter+1;
+    control = WHILE;
+    generateInstructions("{");
+    body = counter;
     setInstruction(counter, JPC, 0, -1 );
-    gi++;
+    li++;
+}
+
+void ifOperation(){
+    li++;
+    condition = counter+1;
+    control = IF;
+    generateInstructions("{");
+    body = counter;
+    setInstruction(counter, JPC, 0, -1 );
+    li++;
+}
+
+void forOperation(){
+    li++;
+    generateInstructions(";");
+    condition = counter+3;
+    control = FOR;
+    li++;
+    generateInstructions(";");
+    setInstruction(counter, JPC, 0, -1 );
+    setInstruction(counter, JMP, 0, -1 );
+    
+    increment = counter+3;
+    generateInstructions("{");
+    body = counter;
+    setInstruction(counter, JMP, 0, -1 );
+    li++;
 }
 
 void returnOperation(){
-    gi--;
+    li--;
+    getOperand();
     setInstruction(counter, STO, 0, 0);
-    removeFromList(gi);
+    removeFromList(li);
     setInstruction(counter, OPR, 0, RTN);
-    removeFromList(gi);
-    //printf("VEREDITCO %s\n", list[gi]->name);
+    removeFromList(li);
+    //printf("VEREDITCO %s\n", list[li]->name);
 }
 
 void setupVariables(){
@@ -140,7 +199,7 @@ void printInstructions(){
     int i;
     printf("PRINT INSTRUCTIONS\n");
     for( i=0; i<counter; i++ ){
-        printf("%s %d %d\n", getInstructionName( instructions[i].operation ), instructions[i].level, instructions[i].argument);
+        printf("%d: %s %d %d\n", i+1,getInstructionName( instructions[i].operation ), instructions[i].level, instructions[i].argument);
     }
 }
 
@@ -154,6 +213,13 @@ void populateStack(struct entry ** e){
 void removeFromList(int i){
     list[i] = NULL;
     shiftListLeft(i);
+}
+
+int listCompare(int i, char * str){
+    if ( strcmp(list[i]->name,str)==0 ){
+        return 1;
+    }
+    return 0;
 }
 
 void listAdd(int i){

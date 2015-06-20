@@ -5,5 +5,6 @@
 
 void printRpn();
 void generateRpn(int);
+int hybrid(int);
 
 #endif

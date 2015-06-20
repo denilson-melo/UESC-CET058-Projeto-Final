@@ -8,6 +8,7 @@
 
 enum { LIT, OPR, LOD, STO, CAL, INT, JMP, JPC, WRT } instructionCode;
 enum { RTN, NEG, ADD, SUB, MUL, DIV, ODD, MOD, EQL, NEQ, LSS, LEQ, GTR, GEQ } operationCode;
+enum { NONE, IF, WHILE, FOR } controlCode; 
 
 struct instruction{
     int operation;
@@ -32,17 +33,24 @@ void setInstruction(int,int,int,int);
 void printInstructions();
 
 void generateInstructions();
+void binaryOperation();
+void sum();
 void multiplyOperation();
 void equalsOperation();
+void ifOperation();
 void whileOperation();
+void forOperation();
 void returnOperation();
 
 void populateStack(struct entry **);
 void printStack();
+
+int listCompare(int, char *);
+void listAdd(int);
+void listSet(int, struct entry *);
 void removeFromList(int);
 void shiftListLeft(int);
 void shiftListRight(int);
-void listAdd(int);
-void listSet(int, struct entry *);
 char * getInstructionName(int);
+
 #endif

@@ -546,7 +546,10 @@ void SIF(){
                         tree[ti++] = lookUp("STMT");
                         push(ti); pushA(at);
                         at *= treeLevelSize; at++;
+                        aTree[at++] = lookUp("{");
                             STMT();
+                        insertEntry("}","symbol");
+                        aTree[++at] = lookUp("}");
                         ti = pop(); at = popA();
                     }
                     if ( symEquals("}") ){
@@ -637,6 +640,7 @@ void SFOR(){
             push(ti); pushA(at);
             at *= treeLevelSize;
                 E();
+                insertEntry(";","symbol");
             ti = pop(); at = popA();
             if ( symEquals(";") ){
                 insertEntry(";","symbol");
@@ -645,6 +649,7 @@ void SFOR(){
                 tree[ti++] = lookUp("E"); 
                 push(ti); pushA(at);
                 at *= treeLevelSize; at++;
+                    aTree[at++] = lookUp(";");
                     E();
                 ti = pop(); at = popA();
                 if ( symEquals(";") ){
@@ -653,7 +658,8 @@ void SFOR(){
                         next();
                     tree[ti++] = lookUp("E");
                     push(ti); pushA(at);
-                    at *= treeLevelSize; at += 2;
+                    at *= treeLevelSize; at += 3;
+                    aTree[at++] = lookUp(";");
                         E();
                     ti = pop(); at = popA();
                     if ( symEquals(")") ){
@@ -666,8 +672,11 @@ void SFOR(){
                                 next();
                             tree[ti++] = lookUp("STMT");
                             push(ti); pushA(at);
-                            at *= treeLevelSize; at += 3;
+                            at *= treeLevelSize; at += 5;
+                            aTree[at++] = lookUp("{");
                                 STMT();
+                            insertEntry("}","symbol");
+                            aTree[++at] = lookUp("}");
                             ti = pop(); at = popA();
                             if ( symEquals("}") ){
                                 insertEntry("}","symbol");

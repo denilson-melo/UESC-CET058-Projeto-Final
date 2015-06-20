@@ -20,7 +20,7 @@ void generateRpn(int k){
         return;
     }
     
-    if ( strcmp(aTree[k]->name, "while") == 0 ){
+    if ( hybrid(k) ){
         nprElements[aux] = aTree[k];
         aux++;
     }
@@ -29,17 +29,28 @@ void generateRpn(int k){
         generateRpn((k+i));
     }
     k /= treeLevelSize;
-    if ( strcmp(aTree[k]->name, "while") != 0 ){
+    if ( !hybrid(k) ){
         nprElements[aux] = aTree[k];
     }
     //nprElements[aux] = aTree[k];
     aux++;
 }
 
+int hybrid(int k){
+    if (   
+        strcmp(aTree[k]->name, "if") == 0
+        || strcmp(aTree[k]->name, "while") == 0
+        || strcmp(aTree[k]->name, "for") == 0
+    ){
+        return 1;
+    }
+    return 0;
+}
+
 void printRpn(){
     int i;
     printf("\n");
-    printf("SUPER TESTE VOANDO AQUI\n");
+    printf("PRINT RPN\n");
     for ( i=0; i<NPR_STRING_SIZE; i++ ){
         if ( nprElements[i]!=NULL ){
             printf("%d : %s\n", i, nprElements[i]->name);
